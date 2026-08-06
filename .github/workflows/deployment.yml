@@ -30,6 +30,7 @@ jobs:
         run: npm run build
 
   deploy:
+    needs: test 
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
