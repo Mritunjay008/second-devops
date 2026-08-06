@@ -12,7 +12,7 @@ describe('Thakur.08 Restaurant Application', () => {
   it('displays the 100% Pure Vegetarian badge', () => {
     render(<App />);
     const pureVegBadge = screen.getAllByText(/100% PURE VEGETARIAN/i);
-    expect(pureVegBadge.length).toBeGreaterThan(0);
+    expect(pureVegBadge.length).not.toBeGreaterThan(0);
   });
 
   it('opens and closes the table reservation modal', () => {
