@@ -3,15 +3,15 @@ trigger:
 
 variables:
   #Azure resources manager connection created during pipeline creation
-  azureSubscription:
+  azureSubscription: 'sc-res-webapp'
   
   #Web app name
-  webAppName:
+  webAppName: 'res-webApp'
   
   # resource group name
-  resourceGroupName:
+  resourceGroupName: 'res-webapp'
   #Environment name: 
-  environmentName:
+  environmentName: 'dev'
   #Agent VM image name
   vmImageName: ubuntu-latest
 
@@ -68,5 +68,5 @@ stages:
               azureSubscription: $(azureSubscription)
               appType: webAppLinux
               appName: $(webAppName)
-              runTimeStack: 'NODE|24'
+              runTimeStack: 'NODE|24-lts'
               package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
