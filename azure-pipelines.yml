@@ -3,21 +3,56 @@
 # Add steps that analyze code, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
 
+# trigger:
+# - master
+
+# pool:
+#   vmImage: ubuntu-latest
+
+# steps:
+# - task: UseNode@1
+#   inputs:
+#     version: '20.x'
+#   displayName: 'Install Node.js'
+
+# - script: |
+#     node -v
+#     npm -v
+#     npm install
+#     npm run build
+#   displayName: 'npm install and build'
+
+
 trigger:
 - master
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'ubuntu-latest'
 
 steps:
 - task: UseNode@1
+  displayName: 'Install Node.js'
   inputs:
     version: '20.x'
-  displayName: 'Install Node.js'
 
 - script: |
-    node -v
-    npm -v
-    npm install
+    npm ci
     npm run build
-  displayName: 'npm install and build'
+  displayName: 'Build React App'
+
+- task: ArchiveFiles@2
+  displayName: 'Create ZIP Package'
+  inputs:
+    rootFolderOrFile: 'build'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/react-app.zip'
+    replaceExistingArchive: true
+
+- task: AzureWebApp@1
+  displayName: 'Deploy to Azure App Service'
+  inputs:
+    azureSubscription: 'Azure-Service-Connection'
+    appType: 'webAppLinux'
+    appName: 'res'
+    package: '$(Build.ArtifactStagingDirectory)/react-app.zip'
