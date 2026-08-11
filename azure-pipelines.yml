@@ -29,7 +29,7 @@ steps:
 - task: AzureWebApp@1
   displayName: 'Deploy to Azure App Service'
   inputs:
-    azureSubscription: 'Azure subscription 1'
+    azureSubscription: 'Azure-subscription'
     appType: 'webAppLinux'
     appName: 'res'
     package: '$(Build.ArtifactStagingDirectory)/react-app.zip'
