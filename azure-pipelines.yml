@@ -1,35 +1,72 @@
 trigger:
 - master
 
-pool:
-  vmImage: 'ubuntu-latest'
+variables:
+  #Azure resources manager connection created during pipeline creation
+  azureSubscription:
+  
+  #Web app name
+  webAppName:
+  
+  # resource group name
+  resourceGroupName:
+  #Environment name: 
+  environmentName:
+  #Agent VM image name
+  vmImageName: ubuntu-latest
 
-steps:
-- task: UseNode@1
-  displayName: 'Install Node.js'
-  inputs:
-    version: '20.x'
+stages:
+- stage: Archive
+  displayName: Archive stage
+  jobs:
+  - job: Archive
+    displayName: Archive
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: AzureAppServiceSettings@1
+      inputs:
+        azureSubscription: $(azureSubscription)
+        appName: $(webAppName)
+        resourceGroupName: $(resourceGroupName)
+        appSettings: |
+          [
+            {
+              "name": "SCM_DO_BUILD_DURING_DEPLOYMENT",
+              "value": "true"
+            }
+          ]
+    - task: ArchiveFiles@2
+      displayName: 'Archive files'
+      inputs:
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)'
+        includeRootFolder: false
+        archiveType: zip
+        archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+        replaceExistingArchive: true
+    
+    - upload: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+      artifact: drop
 
-- script: |
-    node -v
-    npm -v
-    npm install
-    npm run build
-  displayName: 'Install dependencies and build'
-
-- task: ArchiveFiles@2
-  displayName: 'Create ZIP Package'
-  inputs:
-    rootFolderOrFile: '$(System.DefaultWorkingDirectory)'
-    includeRootFolder: false
-    archiveType: 'zip'
-    archiveFile: '$(Build.ArtifactStagingDirectory)/react-app.zip'
-    replaceExistingArchive: true
-
-- task: AzureWebApp@1
-  displayName: 'Deploy to Azure App Service'
-  inputs:
-    azureSubscription: 'Azure-subscription'
-    appType: 'webAppLinux'
-    appName: 'res'
-    package: '$(Build.ArtifactStagingDirectory)/react-app.zip'
+- stage: Deploy
+  displayName: Deploy stage
+  dependsOn: Archive
+  condition: succeeded()
+  jobs:
+  - deployment: Deploy
+    displayName: Deploy
+    environment: $(environmentName)
+    pool:
+      vmImage: $(vmImageName)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: AzureWebApp@1
+            displayName: 'Azure Web App Deploy: Test-NodeJS-Deploy'
+            inputs:
+              azureSubscription: $(azureSubscription)
+              appType: webAppLinux
+              appName: $(webAppName)
+              runTimeStack: 'NODE|24'
+              package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
