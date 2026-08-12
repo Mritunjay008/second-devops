@@ -36,9 +36,9 @@ stages:
               "value": "false"
             }
           ]
-    - task: NodeTool@0
+    - task: UseNode@1
       inputs:
-        versionSpec: '24.x'
+        version: '20.x'
       displayName: 'Install Node.js'
 
     - script: |
@@ -81,5 +81,6 @@ stages:
               azureSubscription: $(azureSubscription)
               appType: webAppLinux
               appName: $(webAppName)
-              runTimeStack: 'NODE|24-lts'
+              runtimeStack: 'NODE|20-lts'
+              startupCommand: 'pm2 serve /home/site/wwwroot --no-daemon --spa'
               package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
