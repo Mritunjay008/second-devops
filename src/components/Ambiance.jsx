@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, Users, Music, Shield, ShieldCheck, MapPin } from 'lucide-react';
+import { Sparkles, Users, Music, ShieldCheck, MapPin } from 'lucide-react';
 
 export default function Ambiance({ onOpenReservation }) {
   return (

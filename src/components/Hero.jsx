@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, Utensils, Star, Award, Flame, Leaf, Clock, Sparkles } from 'lucide-react';
+import { Calendar, Utensils, Star, Award, Flame, Leaf, Sparkles } from 'lucide-react';
 
 export default function Hero({ onOpenReservation }) {
   return (

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Leaf, Phone, Calendar, Menu, X, Sparkles, ShieldCheck } from 'lucide-react';
+import { Leaf, Phone, Calendar, Menu, X, ShieldCheck } from 'lucide-react';
 
 export default function Navbar({ onOpenReservation }) {
   const [scrolled, setScrolled] = useState(false);

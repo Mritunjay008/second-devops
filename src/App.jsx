@@ -13,6 +13,36 @@ export default function App() {
   const [isReservationOpen, setIsReservationOpen] = useState(false);
   const [plate, setPlate] = useState([]);
 
+  const handleAddToPlate = (item) => {
+    setPlate(prev => {
+      const existing = prev.find(p => p.id === item.id);
+      if (existing) {
+        return prev.map(p => p.id === item.id ? { ...p, quantity: p.quantity + 1 } : p);
+      }
+      return [...prev, { ...item, quantity: 1 }];
+    });
+  };
+
+  const handleUpdateQuantity = (itemId, delta) => {
+    setPlate(prev => {
+      return prev.map(p => {
+        if (p.id === itemId) {
+          const newQty = p.quantity + delta;
+          return newQty > 0 ? { ...p, quantity: newQty } : null;
+        }
+        return p;
+      }).filter(Boolean);
+    });
+  };
+
+  const handleRemoveFromPlate = (itemId) => {
+    setPlate(prev => prev.filter(p => p.id !== itemId));
+  };
+
+  const handleClearPlate = () => {
+    setPlate([]);
+  };
+
   return (
     <div style={{ minHeight: '100vh', background: '#090e0b', color: '#f8fafc' }}>
       {/* Navigation */}
@@ -27,7 +57,9 @@ export default function App() {
       {/* Signature Pure Veg Menu Showcase */}
       <MenuShowcase
         plate={plate}
-        setPlate={setPlate}
+        onAddToPlate={handleAddToPlate}
+        onUpdateQuantity={handleUpdateQuantity}
+        onRemoveFromPlate={handleRemoveFromPlate}
         onOpenReservation={() => setIsReservationOpen(true)}
       />
 
@@ -44,12 +76,16 @@ export default function App() {
       <ReservationModal
         isOpen={isReservationOpen}
         onClose={() => setIsReservationOpen(false)}
+        plate={plate}
+        onClearPlate={handleClearPlate}
       />
 
       {/* Floating Selected Dish Plate Drawer */}
       <PlateDrawer
         plate={plate}
-        setPlate={setPlate}
+        onUpdateQuantity={handleUpdateQuantity}
+        onRemoveFromPlate={handleRemoveFromPlate}
+        onClearPlate={handleClearPlate}
         onOpenReservation={() => setIsReservationOpen(true)}
       />
     </div>

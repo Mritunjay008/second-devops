@@ -4,8 +4,8 @@ import MenuShowcase from '../components/MenuShowcase';
 
 describe('MenuShowcase Component', () => {
   it('renders menu items properly', () => {
-    const mockSetPlate = vi.fn();
-    render(<MenuShowcase plate={[]} setPlate={mockSetPlate} onOpenReservation={() => {}} />);
+    const mockOnAddToPlate = vi.fn();
+    render(<MenuShowcase plate={[]} onAddToPlate={mockOnAddToPlate} onOpenReservation={() => {}} />);
 
     expect(screen.getByText(/Thakur's Royal Shahi Thali/i)).toBeInTheDocument();
     expect(screen.getByText(/Paneer Tikka Angara/i)).toBeInTheDocument();
@@ -13,8 +13,8 @@ describe('MenuShowcase Component', () => {
   });
 
   it('filters menu items when typing in the search bar', () => {
-    const mockSetPlate = vi.fn();
-    render(<MenuShowcase plate={[]} setPlate={mockSetPlate} onOpenReservation={() => {}} />);
+    const mockOnAddToPlate = vi.fn();
+    render(<MenuShowcase plate={[]} onAddToPlate={mockOnAddToPlate} onOpenReservation={() => {}} />);
 
     const searchInput = screen.getByPlaceholderText(/search paneer, thali, biryani/i);
     fireEvent.change(searchInput, { target: { value: 'Angara' } });
@@ -23,13 +23,13 @@ describe('MenuShowcase Component', () => {
     expect(screen.queryByText(/Saffron Kesar Rasmalai/i)).not.toBeInTheDocument();
   });
 
-  it('calls setPlate when clicking Add to Plate', () => {
-    const mockSetPlate = vi.fn();
-    render(<MenuShowcase plate={[]} setPlate={mockSetPlate} onOpenReservation={() => {}} />);
+  it('calls onAddToPlate when clicking Add to Plate', () => {
+    const mockOnAddToPlate = vi.fn();
+    render(<MenuShowcase plate={[]} onAddToPlate={mockOnAddToPlate} onOpenReservation={() => {}} />);
 
     const addButtons = screen.getAllByRole('button', { name: /add to plate/i });
     fireEvent.click(addButtons[0]);
 
-    expect(mockSetPlate).toHaveBeenCalled();
+    expect(mockOnAddToPlate).toHaveBeenCalled();
   });
 });

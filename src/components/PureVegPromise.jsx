@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, Heart, Sparkles, CheckCircle2, RefreshCw, SunMedium, UtensilsCrossed } from 'lucide-react';
+import { ShieldCheck, Sparkles, CheckCircle2 } from 'lucide-react';
 
 export default function PureVegPromise() {
   const promises = [

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Flame, Star, ShoppingBag, Plus, Check, Filter, Sparkles } from 'lucide-react';
+import { Search, Flame, Star, ShoppingBag, Plus, Sparkles, Minus } from 'lucide-react';
 
 const MENU_ITEMS = [
   {
@@ -121,10 +121,9 @@ const MENU_ITEMS = [
   }
 ];
 
-export default function MenuShowcase({ plate, setPlate, onOpenReservation }) {
+export default function MenuShowcase({ plate = [], onAddToPlate, onUpdateQuantity, onOpenReservation }) {
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
-  const [addedItemIds, setAddedItemIds] = useState([]);
 
   const categories = ["All", "Royal Thalis", "Paneer & Starters", "Chef's Specials", "Breads & Rice", "Desserts & Drinks"];
 
@@ -134,14 +133,6 @@ export default function MenuShowcase({ plate, setPlate, onOpenReservation }) {
                           item.description.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
-
-  const handleAddToPlate = (item) => {
-    setPlate(prev => [...prev, item]);
-    setAddedItemIds(prev => [...prev, item.id]);
-    setTimeout(() => {
-      setAddedItemIds(prev => prev.filter(id => id !== item.id));
-    }, 1500);
-  };
 
   return (
     <section
@@ -255,7 +246,8 @@ export default function MenuShowcase({ plate, setPlate, onOpenReservation }) {
           }}
         >
           {filteredItems.map((item) => {
-            const isAdded = addedItemIds.includes(item.id);
+            const plateItem = plate.find(p => p.id === item.id);
+            const quantity = plateItem ? plateItem.quantity : 0;
             return (
               <div
                 key={item.id}
@@ -367,35 +359,46 @@ export default function MenuShowcase({ plate, setPlate, onOpenReservation }) {
                       <span style={{ fontSize: '1.4rem', fontWeight: 800, color: '#ffffff' }}>₹{item.price}</span>
                     </div>
 
-                    <button
-                      onClick={() => handleAddToPlate(item)}
-                      style={{
-                        background: isAdded ? '#10b981' : 'rgba(212, 175, 55, 0.12)',
-                        color: isAdded ? '#ffffff' : '#d4af37',
-                        border: isAdded ? '1px solid #10b981' : '1px solid rgba(212, 175, 55, 0.3)',
-                        padding: '10px 18px',
-                        borderRadius: '9999px',
-                        fontSize: '0.88rem',
-                        fontWeight: 700,
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                        transition: 'all 0.2s ease'
-                      }}
-                    >
-                      {isAdded ? (
-                        <>
-                          <Check size={16} />
-                          <span>Added!</span>
-                        </>
-                      ) : (
-                        <>
-                          <Plus size={16} />
-                          <span>Add to Plate</span>
-                        </>
-                      )}
-                    </button>
+                    {quantity > 0 ? (
+                      <div style={{ display: 'flex', alignItems: 'center', background: '#10b981', borderRadius: '9999px', padding: '4px 8px' }}>
+                        <button
+                          onClick={() => onUpdateQuantity(item.id, -1)}
+                          style={{ background: 'none', border: 'none', color: '#ffffff', cursor: 'pointer', padding: '4px 6px', display: 'flex', alignItems: 'center' }}
+                        >
+                          <Minus size={14} />
+                        </button>
+                        <span style={{ fontSize: '0.9rem', fontWeight: 800, padding: '0 8px', color: '#ffffff' }}>
+                          {quantity}
+                        </span>
+                        <button
+                          onClick={() => onUpdateQuantity(item.id, 1)}
+                          style={{ background: 'none', border: 'none', color: '#ffffff', cursor: 'pointer', padding: '4px 6px', display: 'flex', alignItems: 'center' }}
+                        >
+                          <Plus size={14} />
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => onAddToPlate(item)}
+                        style={{
+                          background: 'rgba(212, 175, 55, 0.12)',
+                          color: '#d4af37',
+                          border: '1px solid rgba(212, 175, 55, 0.3)',
+                          padding: '10px 18px',
+                          borderRadius: '9999px',
+                          fontSize: '0.88rem',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          transition: 'all 0.2s ease'
+                        }}
+                      >
+                        <Plus size={16} />
+                        <span>Add to Plate</span>
+                      </button>
+                    )}
                   </div>
 
                 </div>

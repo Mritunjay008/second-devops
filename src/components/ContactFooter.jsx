@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapPin, Phone, Mail, Clock, Leaf, ShieldCheck, Share2, Globe, MessageCircle } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, Leaf, ShieldCheck, MessageCircle, Calendar } from 'lucide-react';
 
 export default function ContactFooter({ onOpenReservation }) {
   return (
@@ -48,9 +48,22 @@ export default function ContactFooter({ onOpenReservation }) {
               Premier 100% Pure Vegetarian Fine Dining Restaurant. Serving authentic heritage recipes with pure A2 desi ghee, organic whole spices, and uncompromised culinary purity since 2008.
             </p>
 
-            <div className="veg-tag">
-              <ShieldCheck size={14} />
-              <span>100% PURE VEG GUARANTEED</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+              <div className="veg-tag">
+                <ShieldCheck size={14} />
+                <span>100% PURE VEG GUARANTEED</span>
+              </div>
+
+              {onOpenReservation && (
+                <button
+                  onClick={onOpenReservation}
+                  className="btn-primary"
+                  style={{ padding: '8px 18px', fontSize: '0.82rem' }}
+                >
+                  <Calendar size={14} />
+                  <span>Reserve Table</span>
+                </button>
+              )}
             </div>
           </div>
 
